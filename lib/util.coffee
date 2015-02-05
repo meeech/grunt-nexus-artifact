@@ -54,7 +54,7 @@ module.exports = (grunt) ->
 
       filePath = "#{path}/.downloadedArtifacts"
       downloadedArtifacts = {}
-      downloadedArtifacts[artifact.toString().replace("SNAPSHOT", snapshotSuffix) ] = new Date()
+      downloadedArtifacts[artifact.toString().replace(artifact.version, snapshotSuffix) ] = new Date()
       grunt.file.write filePath, JSON.stringify(downloadedArtifacts)
 
       deferred.resolve()
@@ -200,10 +200,13 @@ module.exports = (grunt) ->
           parser.parseString data, (err, result) ->
             grunt.file.delete temp_path
             
-            if !result.metadata.versioning || !result.metadata.versioning[0].snapshot
-              deferred.reject "Insufficient data in Maven metadata to resolve snapshot version"
+            console.log(JSON.stringify(result.metadata));
+            suffix = result.metadata.version;
 
-            suffix = result.metadata.versioning[0].snapshot[0].timestamp[0] + "-" + result.metadata.versioning[0].snapshot[0].buildNumber[0];
+            # if !result.metadata.versioning || !result.metadata.versioning[0].snapshot
+            #   deferred.reject "Insufficient data in Maven metadata to resolve snapshot version"
+
+            # suffix = result.metadata.versioning[0].snapshot[0].timestamp[0] + "-" + result.metadata.versioning[0].snapshot[0].buildNumber[0];
             
             filePath = "#{path}/.downloadedArtifacts"
             if grunt.file.exists(filePath)
@@ -213,7 +216,7 @@ module.exports = (grunt) ->
                 deferred.resolve( temp_path )
 
             grunt.log.writeln "Downloading #{artifact.buildSnapshotUrl(suffix)}"
-            temp_path = "#{path}/#{artifact.buildArtifactUri()}"
+            temp_path = "#{path}/#{artifact.buildArtifactSnapshotUri(suffix)}"
             downloadSnapshot(artifact, path, temp_path, suffix).then( ->
               console.log "Snapshot download complete of #{artifact.name}"
               deferred.resolve( temp_path )

@@ -43,4 +43,5 @@ module.exports = (grunt) -> class NexusArtifact
       { a: @name, v: @version, e: @ext }[$1]
 
   buildArtifactSnapshotUri: (suffix) ->
-    "#{@buildArtifactUri()}".replace "SNAPSHOT", suffix
+    @versionPattern.replace /%([ave])/g, ($0, $1) =>
+      { a: @name, v: suffix, e: @ext }[$1]
