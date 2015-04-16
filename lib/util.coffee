@@ -32,6 +32,7 @@ module.exports = (grunt) ->
       grunt.file.delete temp_path
 
       filePath = "#{path}/.downloadedArtifacts"
+      downloadedArtifacts = if grunt.file.exists(filePath) then grunt.file.readJSON(filePath) else {}
       downloadedArtifacts[artifact.toString()] = new Date()
       grunt.file.write filePath, JSON.stringify(downloadedArtifacts)
 
