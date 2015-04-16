@@ -28,8 +28,8 @@ module.exports = (grunt) ->
       if err
         deferred.reject err
         return
-
-      grunt.file.delete temp_path
+        
+      #grunt.file.delete temp_path
 
       filePath = "#{path}/.downloadedArtifacts"
       downloadedArtifacts[artifact.toString()] = new Date()
